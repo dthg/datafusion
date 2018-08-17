@@ -691,6 +691,13 @@ mod tests {
     }
 
     #[test]
+    fn parse_pojection_function() {
+        let sql = String::from("SELECT bar(a, b).c FROM foo");
+        let _ast = parse_sql(&sql);
+        //TODO: add assertions
+    }
+
+    #[test]
     fn parse_compound_expr_1() {
         use self::ASTNode::*;
         use self::SQLOperator::*;
