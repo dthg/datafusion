@@ -216,6 +216,20 @@ impl SqlToRel {
                 }
             }
 
+            &ASTNode::SQLCompoundIdentifier(ref fields) => {
+                let head = &fields[0];
+                match schema.columns().iter().position(|c| c.name().eq(head)) {
+                    Some(index) => {
+                        let field = schema.columns().get(index).unwrap();
+                        match field.data_type() {
+                            DataType::Struct(_) => Ok(Expr::Column(index)),
+                            _ => Err(format!("Fields are: {:?}\nSchema is: {}", fields, schema)),
+                        }
+                    }
+                    _ => Err(format!("Fields are: {:?}\nSchema is: {}", fields, schema)),
+                }
+            }
+
             &ASTNode::SQLWildcard => {
                 //                schema.columns().iter().enumerate()
                 //                    .map(|(i,c)| Ok(Expr::Column(i))).collect()
